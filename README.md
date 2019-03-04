@@ -1,6 +1,8 @@
 # Right-LANe-2.0
 Steering System and Build Guide for the 2nd Iteration of Home-Made Electric Longboard
 
+![Logo](https://github.com/sovaCode/Right-LANe-2.0/blob/master/Images/Right%20LANe%20logo.png)
+
 ## Software Introduction
 Cutom steering system with its own remote control, built using Arduino Pro Minis, NRF2401Ls and a Nintendo Wii Nunchuk Controller.
 It features throttle joystick, board's front and back light control, board's battey level monitor, safety switch and some other software-implemented safety precautions.
