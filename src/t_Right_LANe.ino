@@ -7,8 +7,8 @@
 //Made by Lan Sovinc for Right LANe MARK 2 electric longboard
 
 /*SERIAL PRINT SWITCH (uncomment to enable printing to the Serial Monitor)________________________________________________________________*/
-#define Sprintln(a) //(Serial.println(a))
-#define Sprint(b) //(Serial.print(b))
+#define Sprintln(a) (Serial.println(a))
+#define Sprint(b) (Serial.print(b))
 
 /*LIBRARIES_______________________________________________________________________________________________________________________________*/
 #include <SPI.h>
@@ -17,10 +17,10 @@
 /*VARIABLES_______________________________________________________________________________________________________________________________*/
 // Buttons, joystick and LEDs
 int joystick = A0;
-int cButton = 5;
-int zButton = 2;
-int red = 3;
-int orange = 4;
+int cButton = 2;
+int zButton = 3;
+int red = 4;
+int orange = 5;
 int yellow = 6;
 int green = 9;
 int notConnected = 10;
@@ -55,8 +55,8 @@ void setup() {
   Sprintln("Setting up");
 
   // IO pins
-  pinMode(cButton, INPUT);
-  pinMode(zButton, INPUT);
+  pinMode(cButton, INPUT_PULLUP);
+  pinMode(zButton, INPUT_PULLUP);
   
   // Radio initialization
   radio.begin();
@@ -67,7 +67,7 @@ void setup() {
   radio.stopListening();
 
   // Interrupt setup
-  attachInterrupt(digitalPinToInterrupt(2), setNeutral, FALLING);
+  attachInterrupt(digitalPinToInterrupt(3), setNeutral, RISING);
 
   // LEDs
   pinMode(red, OUTPUT);
@@ -113,7 +113,7 @@ void loop() {
         // Read ACK and save skateboard battery voltage
         radio.read( &skateBattery, 1 );
         // Display battery voltage on the remote
-        readBattery();
+        readSkateBattery();
         Sprint("Received skateboard battery level: ");
         Sprintln(skateBattery);
         Sprintln();
@@ -138,7 +138,7 @@ void loop() {
 /*READ THROTTLE JOYSTICK FUNCTION_________________________________________________________________________________________________________*/
 void readThrottle(){
   // If safety button is pressed read the throttle value
-  if(digitalRead(zButton) == HIGH){
+  if(digitalRead(zButton) == LOW){
     currentThrottle = analogRead(joystick);
     if(!zButtonReleased || (currentThrottle > 512 && currentThrottle < 530)){ // the statement forces the user to press the safety button before pushing the throttle joystick
       zButtonReleased = false;
@@ -158,7 +158,7 @@ void setNeutral(){
 void readLightButton(){
   cButtonState = digitalRead(cButton);
   if(cButtonState != cButtonStatePrevious){
-    if(cButtonState == HIGH){
+    if(cButtonState == LOW){
       if((!data.frontLight)&&(!data.backLight)){
         data.backLight = !data.backLight;  
       }
@@ -175,7 +175,7 @@ void readLightButton(){
 }
 
 /*READ SKATEBOARD BATTERY VOLTAGE FUNCTION________________________________________________________________________________________________*/
-void readBattery(){
+void readSkateBattery(){
 
   // More than 40V
   if (skateBattery > 925){
